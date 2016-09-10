@@ -1,6 +1,6 @@
 {
   "name": "ng-reactify",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "npm module for angularjs and reactjs integration",
   "main": "index.js",
   "scripts": {
