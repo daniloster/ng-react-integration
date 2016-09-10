@@ -1,2 +1,2 @@
-# ng-react-integration
-Example of integration between angular and react
+# ng-reactify
+npm module to integrate angularjs and reactjs.
