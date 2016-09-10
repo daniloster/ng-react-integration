@@ -1,0 +1,23 @@
+language: node_js
+node_js:
+- '5.1'
+- '5.0'
+- '4.2'
+- '4.1'
+- '4.0'
+script:
+- npm test
+after_success:
+- npm build
+deploy:
+  provider: npm
+  email: daniloster@gmail.com
+  on:
+    tags: true
+    branch: master
+branches:
+  only:
+  - master
+env:
+  global:
+  - secure: AprGVqIJxJvnbLFKuVq19YBDe2I9Wb2rRVw+u0/ysfLtZTi8OA/9xG7hi+PZJfdQ3jOx87Gb3AV+MSpCgIYrFL6e4huDZa9HRYPvq1+/r0AOn16/nEdqb0oSYZ45/SZetaKK+6DtMurOudBdQUy2r9zB5xnwBTPYHsoNdzDAlEoaG/a4wEtbDrskyMgj+KWoTWIfDQ+7M09SSi514KH3gI+lY4Lv+vUr57FbnbsVS98zz81dHPnD5vsS5/FYUmsaqhyPSigqOnfDUM9Q22oeI5RL/m8q7kCMkWo3gpW/Y2xpYVuys2XDkSHqc3cJnj/EE2OLEZN0Y+4V/xOdlMsqaiYVQedpZxDcSNhpVjC8Z/TACk8CsHZECgpU1z9eodCQ6xNX43JW7m6c2ozXEs5Z9lIlswjFm8uaZRtFkyGj2CUArEvTqeSUUOswYnZPz8edFCapQqcmZ1jWF6wDWOc+7X8qD1ATlv8yv2SQyrH6gUD/D059EoxJfwlnqDHAjdfE4PV8RPyHx1TQuYCY1KZjXXu434uyuSIPmA+dnZ4c45P2CJ993nUnC4325Q9h8oMczFpaSwn05JNrQ2MhaFgxGwxrB1KxylBEjl9QgsOQrtHbgZ025C3WJjuou6l5GLjuDuDqmEb6fh6ZGtvy5/IDwNp1M6k6T7nEcI/EqbXfByo=
