@@ -60,7 +60,6 @@ function getReactPageController({
         init();
         
         function init() {
-            console.log('history', history);
             $scope.store = store;
             $scope.history = history;
             $scope.props = props($injector);

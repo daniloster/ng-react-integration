@@ -39,9 +39,7 @@ function NgReactifyComponent(reactifyComponentRegister, $rootScope, $route) {
         init();
 
         function init() {
-            console.log('ngReactifyComponent scope', scope);
             if (scope.route) {
-                console.log('ngReactifyComponent patched');
                 patchAngularRouteChange();
             }
             unsubscribers.push(scope.$watch(() => scope.props,
@@ -62,46 +60,34 @@ function NgReactifyComponent(reactifyComponentRegister, $rootScope, $route) {
         }
 
         function unmount() {
-            console.log('ngReactifyComponent unmount');
             ReactDOM.unmountComponentAtNode(element[0]);
         }
 
         function render(props = {}) {
-            console.log('ngReactifyComponent render');
             let ReactComponent;
             if (scope.route) {
-                // class WrapperComponent extends Component {
-                //     constructor(innerProps) {
-                //         super(innerProps);
-                //     }
+                class WrapperComponent extends Component {
+                    constructor(innerProps) {
+                        super(innerProps);
+                    }
 
-                //     getChildContext() {
-                //         return props;
-                //     }
+                    getChildContext() {
+                        return props;
+                    }
 
-                //     render() {
-                //         return (
-                //             <div>
-                //                 {this.props.children}
-                //             </div>
-                //         );
-                //     }
-                // }
-                // WrapperComponent.propTypes = {
-                //     children: PropTypes.element
-                // };
-                // WrapperComponent.getChildContext = () => props;
-                // WrapperComponent.childContextTypes = defineChildContextTypes(props);
-
-                const WrapperComponent = ({ children }) =>  (
-                    <div>
-                        {children}
-                    </div>
-                );
-
-                console.log('ngReactifyComponent WrapperComponent.childContextTypes', WrapperComponent.childContextTypes);
-                console.log('ngReactifyComponent route', scope.route);
-                console.log('ngReactifyComponent history', scope.history);
+                    render() {
+                        return (
+                            <div>
+                                {this.props.children}
+                            </div>
+                        );
+                    }
+                }
+                WrapperComponent.propTypes = {
+                    children: PropTypes.element
+                };
+                WrapperComponent.getChildContext = () => props;
+                WrapperComponent.childContextTypes = defineChildContextTypes(props);
 
                 const RouterComponent = () => {
                     return (
@@ -144,7 +130,6 @@ function NgReactifyComponent(reactifyComponentRegister, $rootScope, $route) {
                 }
             }
 
-            console.log('ngReactifyComponent ReactComponent', ReactComponent);
             ReactDOM.render(
                 <ReactComponent />,
                 element[0]
