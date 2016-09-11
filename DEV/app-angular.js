@@ -10,25 +10,27 @@ import {
 
 import HelloWorld from '../src/boilerplate/hello-world';
 import Comment from '../src/boilerplate/comment';
-import PagesContainer from '../src/boilerplate/pages-container';
+import PagesRoutes from '../src/boilerplate/pages-routes';
 import { hashHistory } from 'react-router';
 
 reactifyComponentRegister.set({
     HelloWorld,
     Comment,
-    PagesContainer
+    PagesRoutes
 });
+const reactPageConfig = {
+    path: '/pages',
+    componentName: 'PagesRoutes',
+    history: hashHistory
+};
+const angularRouteConfig = {
+    // angular configuration for route
+};
+const reactPage = ngReactifyPageConfig.getReactRoute(reactPageConfig, angularRouteConfig);
 
 const appName = 'app-angular';
 angular.module(appName, [ngReactify.name, 'ngRoute'])
     .config(['$routeProvider', ($routeProvider) => {
-        const reactPage = ngReactifyPageConfig.getReactRoute({
-            path: '/pages',
-            componentName: 'PagesContainer',
-            history: hashHistory
-        }, {
-            // angular configuration for route
-        });
         console.log('ROUTE CONFIGURED', reactPage);
         $routeProvider
             .when('/', {
@@ -44,7 +46,7 @@ angular.module(appName, [ngReactify.name, 'ngRoute'])
                             Comment
                         </a>
                         <br />
-                        <a href='#/pages/'>
+                        <a href='#/pages'>
                             Pages
                         </a>
                         <br />
@@ -76,6 +78,7 @@ angular.module(appName, [ngReactify.name, 'ngRoute'])
                 `
             })
             .when(reactPage.path, reactPage.config)
+            .when(reactPageConfig.path, reactPage.config)
             .otherwise({
                 template: '<h1>SORRY! ERROR!</h1>'
             });

@@ -1,16 +1,14 @@
 /* eslint-disable */
-import ngReact from './ng-reactify-module';
-
 import React, {
-    PropTypes
+    PropTypes,
+    Component
 } from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import { Router, Route } from 'react-router';
+import { Router, Route, IndexRoute } from 'react-router';
+import ngReact from './ng-reactify-module';
 
 ngReact.directive('ngReactifyComponent', NgReactifyComponent);
-
-let isPatched = false;
 
 NgReactifyComponent.$inject = ['ReactifyComponentRegister', '$rootScope', '$route'];
 function NgReactifyComponent(reactifyComponentRegister, $rootScope, $route) {
@@ -33,7 +31,7 @@ function NgReactifyComponent(reactifyComponentRegister, $rootScope, $route) {
     };
 
     function link(scope, element) {
-        const Component = reactifyComponentRegister.get(scope.component),
+        const CustomComponent = reactifyComponentRegister.get(scope.component),
             unsubscribers = [];
         let lastRoute = null,
             routeParams = {};
@@ -70,52 +68,85 @@ function NgReactifyComponent(reactifyComponentRegister, $rootScope, $route) {
 
         function render(props = {}) {
             console.log('ngReactifyComponent render');
-            let CustomComponent;
+            let ReactComponent;
             if (scope.route) {
-                const WrapperComponent = ({ children }) => (
+                // class WrapperComponent extends Component {
+                //     constructor(innerProps) {
+                //         super(innerProps);
+                //     }
+
+                //     getChildContext() {
+                //         return props;
+                //     }
+
+                //     render() {
+                //         return (
+                //             <div>
+                //                 {this.props.children}
+                //             </div>
+                //         );
+                //     }
+                // }
+                // WrapperComponent.propTypes = {
+                //     children: PropTypes.element
+                // };
+                // WrapperComponent.getChildContext = () => props;
+                // WrapperComponent.childContextTypes = defineChildContextTypes(props);
+
+                const WrapperComponent = ({ children }) =>  (
                     <div>
                         {children}
                     </div>
                 );
-                WrapperComponent.propTypes = {
-                    children: PropTypes.element
-                };
-                
+
+                console.log('ngReactifyComponent WrapperComponent.childContextTypes', WrapperComponent.childContextTypes);
                 console.log('ngReactifyComponent route', scope.route);
                 console.log('ngReactifyComponent history', scope.history);
 
-                const RouterComponent = () => (
-                    <Router history={scope.history}>
-                        <Route
-                            path={scope.route}
-                            component={WrapperComponent}
-                        >
-                            <Component {...props} />
-                        </Route>
-                    </Router>
-                );
-                CustomComponent = RouterComponent;
+                const RouterComponent = () => {
+                    return (
+                        <Router history={scope.history}>
+                            <Route
+                                path={scope.route}
+                                component={WrapperComponent}
+                            >
+                                {CustomComponent()}
+                            </Route>
+                        </Router>
+                    );
+                };
+                if (scope.store) {
+                    ReactComponent = () => (
+                        <Provider store={scope.store}>
+                            {RouterComponent()}
+                        </Provider>
+                    ); 
+                } else {
+                    ReactComponent = () => (
+                        <div>
+                            {RouterComponent()}
+                        </div>
+                    );
+                }
             } else {
-                CustomComponent = () => (
-                    <Component {...scope.props}></Component>
-                );
-            }
-            let ProvidedCustomComponent;
-            if (scope.store) {
-                console.log('ngReactifyComponent store', scope.store);
-                const StoreComponent = () => (
-                    <Provider store={scope.store}>
-                        <CustomComponent />
-                    </Provider>
-                );
-                ProvidedCustomComponent = StoreComponent;
-            } else {
-                ProvidedCustomComponent = CustomComponent;
+                if (scope.store) {
+                    ReactComponent = () => (
+                        <Provider store={scope.store}>
+                            <CustomComponent {...props}></CustomComponent>
+                        </Provider>
+                    );
+                } else {
+                    ReactComponent = () => (
+                        <div>
+                            <CustomComponent {...props}></CustomComponent>
+                        </div>
+                    );
+                }
             }
 
-            console.log('ngReactifyComponent ProvidedCustomComponent', ProvidedCustomComponent);
+            console.log('ngReactifyComponent ReactComponent', ReactComponent);
             ReactDOM.render(
-                <ProvidedCustomComponent />,
+                <ReactComponent />,
                 element[0]
             );
         }
@@ -152,7 +183,7 @@ function NgReactifyComponent(reactifyComponentRegister, $rootScope, $route) {
                                 $route.current = lastRoute;
                                 $route.current.params = routeParams;
 
-                                render();
+                                render(scope.props);
                             }
                         }
                     })
@@ -161,4 +192,36 @@ function NgReactifyComponent(reactifyComponentRegister, $rootScope, $route) {
         }
     }
 }
+
+let isPatched = false;
+function getType(props, key) {
+    const target = props[key];
+    if (target) {
+        if (Array.isArray(target)) {
+            return PropTypes.array;
+        } else if (target['$$typeof'] === 'Symbol(react.element)') {
+            return PropTypes.element;
+        } else if (typeof target === 'object') {
+            return PropTypes.object;
+        } else if (!Number.isNaN(Number(target))) {
+            return PropTypes.number;
+        } else if (target.toUpperCase) {
+            return PropTypes.string;
+        } else if (false == new Boolean(false) || true == new Boolean(true)) {
+            return PropTypes.bool;
+        }
+    } else {
+        return null;
+    }
+}
+
+function defineChildContextTypes(props) {
+    return Object.keys(props).reduce((map, key) => {
+        const currentType = getType(props, key);
+        if (currentType) {
+            map[key] = currentType;
+        }
+    }, {});
+}
+
 /* eslint-enable */
