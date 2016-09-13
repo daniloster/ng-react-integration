@@ -2,9 +2,9 @@
 npm module to integrate angularjs and reactjs.
 
 ## Motivation
-I have been working with angularjs for more than years. I am backend guy that amazed with frontend 
-world and I would like to make frontend development easier than it is.
-First of all, we need to think out of the bubble. Think about reactjs, especially, functional programming,
+I have been working with angularjs for more than 2 years. I am backend guy amazed with frontend world 
+and I would like to make frontend development easier than it is.
+First of all, we need to think out of the box. Thinking about reactjs, especially, functional programming,
 it is a bit different from convetional OO programming so, (git it five minute)[https://signalvnoise.com/posts/3124-give-it-five-minutes].
 Seriously, it is just a new approach for new problems that we have been facing with the web evolution.
 
@@ -100,10 +100,10 @@ angular.element(document).ready(() => {
 });
 ```
 ### React compoennts
-For componenst in reactjs that mangage url, it is very important (we just cover react-router) that we need to
-manage the <Link> components in react, they must have a dynamic baseUrl like the following code.
+For react components with links <Link /> (it is very important, we just cover react-router), they must have
+a dynamic baseUrl like the following code. Doing so, the ng-reactify module is able to manage the route changes.
 
-Look the method render inside a component.
+Look the method render inside the component below.
 ```
 import React, {
     Component
@@ -117,8 +117,8 @@ render() {
         * Thus, it is important capture the parent context path in
         * order to define relative paths.
         * 
-        * Even if you are not using a route management, this code
-        * manages well the capture of parent route.
+        * Even if you are not using a route manager, this code
+        * handles well the capture of parent context path.
         * 
         * Expected result for non-managed-routes: ''
         * Expected result for managed-routes: <the-correct-parent-url>
