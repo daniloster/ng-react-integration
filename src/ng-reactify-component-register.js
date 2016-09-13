@@ -2,14 +2,6 @@ import ngReact from './ng-reactify-module';
 
 function ReactifyComponentRegister() {
     const componentsMapping = {};
-    this.set = set;
-    this.get = get;
-
-    function set(map) {
-        Object.keys(map).forEach(componentName => {
-            setItem(componentName, map[componentName]);
-        });
-    }
 
     function setItem(name, component) {
         if (Object.keys(componentsMapping).indexOf(name) > -1) {
@@ -22,9 +14,12 @@ function ReactifyComponentRegister() {
         componentsMapping[name] = component;
     }
 
-    function get(component) {
-        return componentsMapping[component];
-    }
+    this.set = (map) => {
+        Object.keys(map).forEach(componentName => {
+            setItem(componentName, map[componentName]);
+        });
+    };
+    this.get = (component) => componentsMapping[component];
 }
 
 const register = new ReactifyComponentRegister();

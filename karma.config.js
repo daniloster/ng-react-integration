@@ -1,6 +1,8 @@
 /* eslint-disable */
 var webpackConfig = require('./webpack.config'),
-    path = require('path');
+    path = require('path'),
+    
+    babelPolyfill = require.resolve('babel-polyfill');
 
 function initKarma(config) {
     config.set({
@@ -18,13 +20,19 @@ function initKarma(config) {
         basePath: path.resolve(__dirname),
         files: [
             require.resolve('phantomjs-polyfill'),
-            { pattern: './src/**/*-test.js', watched: false }
+            
+            babelPolyfill,
+
+            { pattern: './src/.setup-test.js', watched: false },
+            { pattern: './**/*-test.js', watched: false }
         ],
         exclude: [
+            './node_modules/**/*-test.js'
         ],
         preprocessors: {
-            './src/**/*-test.js': ['webpack'],
-            './src/**/*.js': ['webpack']
+            './src/**/*.js': ['webpack', 'sourcemap'],
+            [babelPolyfill]: ['webpack', 'sourcemap'],
+            './DEV/**/*.js': ['webpack', 'sourcemap']
         },
         plugins: [
             'karma-jasmine',
@@ -32,7 +40,12 @@ function initKarma(config) {
             'karma-phantomjs-launcher',
             'karma-phantomjs-shim',
             'karma-sourcemap-loader'
-        ]
+        ],
+        babelPreprocessor: {
+            options: {
+                presets: ['airbnb']
+            }
+        }
     });
 }
 module.exports = initKarma;

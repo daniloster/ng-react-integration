@@ -29,9 +29,9 @@ const angularRouteConfig = {
 const reactPage = ngReactifyPageConfig.getReactRoute(reactPageConfig, angularRouteConfig);
 
 const appName = 'app-angular';
-angular.module(appName, [ngReactify.name, 'ngRoute'])
-    .config(['$routeProvider', ($routeProvider) => {
-        console.log('ROUTE CONFIGURED', reactPage);
+const appModule = angular.module(appName, [ngReactify.name, 'ngRoute']);
+
+    appModule.config(['$routeProvider', ($routeProvider) => {
         $routeProvider
             .when('/', {
                 template: `
@@ -84,7 +84,5 @@ angular.module(appName, [ngReactify.name, 'ngRoute'])
             });
     }]);
 
-angular.element(document).ready(() => {
-    angular.bootstrap(document, [appName]);
-});
+export default appModule;
 /* eslint-enable */

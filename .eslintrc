@@ -12,6 +12,7 @@
         "react/jsx-indent-props": [2, 4]
     },
     "env": {
-        "jasmine": true
+        "jasmine": true,
+        "node": true
     }
 }

@@ -1,6 +1,7 @@
 /* eslint-disable */
 var path = require('path'),
-    autoprefixer = require('autoprefixer'),
+    autoprefixer = require('autoprefixer')
+    webpack = require('webpack'),
 
     isTest = process.env.NODE_ENV === 'test',
     isProd = process.env.NODE_ENV === 'production',
@@ -28,9 +29,7 @@ var path = require('path'),
     imgLoader = 'img',
 
     webpackConfig = {
-        entry: {
-            'ng-reactify': isDev ? './DEV/index.js' : './index.js' 
-        },
+        plugins: [],
         module: {
             preLoaders: [
                 {
@@ -45,7 +44,7 @@ var path = require('path'),
                     exclude: /node_modules/,
                     loader: 'babel',
                     query: {
-                        presets: ['react', 'es2015', 'stage-0']
+                        presets: ['react', 'es2015', 'stage-0', 'airbnb']
                     }
                 },
                 {
@@ -87,12 +86,23 @@ if (!isProd) {
 }
 
 if (isTest) {
+    webpackConfig.plugins.push(new webpack.DefinePlugin({
+      // Force HTMLtoJSX to use the in-browser `document` object rather than
+      // require the Node-only "jsdom" package.
+      IN_BROWSER: true
+    }));
     webpackConfig.externals = {
         'react/addons': true,
         'react/lib/ExecutionEnvironment': true,
         'react/lib/ReactContext': true
     };
 } else {
+    webpackConfig.entry = {
+        'ng-reactify': [
+            require.resolve('babel-polyfill'),
+            isDev ? './DEV/index.js' : './index.js'
+        ]
+    };
     webpackConfig.output = {
         path: path.resolve(__dirname, 'dist'),
         filename: '[name].js'
