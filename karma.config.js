@@ -2,6 +2,7 @@
 var webpackConfig = require('./webpack.config'),
     path = require('path'),
     
+    phantomPolyfill = require.resolve('phantomjs-polyfill'),
     babelPolyfill = require.resolve('babel-polyfill');
 
 function initKarma(config) {
@@ -19,7 +20,7 @@ function initKarma(config) {
         },
         basePath: path.resolve(__dirname),
         files: [
-            require.resolve('phantomjs-polyfill'),
+            phantomPolyfill,
             
             babelPolyfill,
 

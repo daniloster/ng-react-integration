@@ -8,6 +8,14 @@ First of all, we need to think out of the box. Thinking about reactjs, especiall
 it is a bit different from convetional OO programming so, (git it five minute)[https://signalvnoise.com/posts/3124-give-it-five-minutes].
 Seriously, it is just a new approach for new problems that we have been facing with the web evolution.
 
+## Consuming
+### require
+var ngReactify = require('ng-reactify');
+### es6
+import ngReactify from 'ng-reactify';
+### global/window
+var ngReactify = window.ngReactify;
+
 ## Angular-React integration example
 Here is an angular app using es6. Notice the following comment after the code.
 ```

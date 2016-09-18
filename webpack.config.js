@@ -2,6 +2,7 @@
 var path = require('path'),
     autoprefixer = require('autoprefixer')
     webpack = require('webpack'),
+    package = require('./package.json'),
 
     isTest = process.env.NODE_ENV === 'test',
     isProd = process.env.NODE_ENV === 'production',
@@ -14,14 +15,14 @@ var path = require('path'),
         isProd
             ? ['&localIdentName=[hash:base64:32]']
             : ['&sourceMap', '&localIdentName=[name]--[local]']
-    ).join(''),
+        ).join(''),
     sassLoader = [
         'sass'
     ].concat(
         isProd
             ? []
             : ['?sourceMap']
-    ).join(''),
+        ).join(''),
     postcssLoader = ['postcss'].concat(isProd ? [] : ['?sourceMap']).join(''),
     resolveUrlLoader = ['resolve-url'].concat(isProd ? [] : ['?sourceMap']).join(''),
 
@@ -29,7 +30,9 @@ var path = require('path'),
     imgLoader = 'img',
 
     webpackConfig = {
-        plugins: [],
+        plugins: [
+            new webpack.optimize.DedupePlugin()
+        ],
         module: {
             preLoaders: [
                 {
@@ -81,15 +84,37 @@ var path = require('path'),
         }
     };
 
+function toCamelCase(text) {
+    return text.split('-')
+        .map((part, idx) =>
+            idx === 0
+                ? part
+                : [part.charAt(0).toUpperCase(), part.substring(1).toLowerCase()].join('')
+        )
+        .join('');
+}
+
 if (!isProd) {
     webpackConfig.devtool = 'inline-source-map';
+} else {
+    webpackConfig.plugins.push(new webpack.optimize.UglifyJsPlugin({
+        compress: {
+            booleans: true,
+            conditionals: true,
+            drop_console: true,
+            drop_debugger: true,
+            join_vars: true,
+            screw_ie8: true,
+            sequences: true
+        }
+    }));
 }
 
 if (isTest) {
     webpackConfig.plugins.push(new webpack.DefinePlugin({
-      // Force HTMLtoJSX to use the in-browser `document` object rather than
-      // require the Node-only "jsdom" package.
-      IN_BROWSER: true
+        // Force HTMLtoJSX to use the in-browser `document` object rather than
+        // require the Node-only "jsdom" package.
+        IN_BROWSER: true
     }));
     webpackConfig.externals = {
         'react/addons': true,
@@ -98,14 +123,16 @@ if (isTest) {
     };
 } else {
     webpackConfig.entry = {
-        'ng-reactify': [
+        [package.name]: [
             require.resolve('babel-polyfill'),
             isDev ? './DEV/index.js' : './index.js'
         ]
     };
     webpackConfig.output = {
         path: path.resolve(__dirname, 'dist'),
-        filename: '[name].js'
+        filename: '[name].js',
+        libraryTarget: 'umd',
+        library: toCamelCase(package.name)
     };
 }
 
