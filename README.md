@@ -21,18 +21,14 @@ Here is an angular app using es6. Notice the following comment after the code.
 ```
 import angular from 'angular';
 import 'angular-route';
-import {
-    ngReactify,
-    ngReactifyPageConfig,
-    reactifyComponentRegister
-} from '../index';
+import ngReactify from 'ng-reactify';
 
 import HelloWorld from '../src/boilerplate/hello-world';
 import Comment from '../src/boilerplate/comment';
 import PagesRoutes from '../src/boilerplate/pages-routes';
 import { hashHistory } from 'react-router';
 
-reactifyComponentRegister.set({
+ngReactify.registerComponents({
     HelloWorld,
     Comment,
     PagesRoutes
@@ -42,16 +38,14 @@ const reactPageConfig = {
     componentName: 'PagesRoutes',
     history: hashHistory
 };
-const angularRouteConfig = {
+const ngRouteConfig = {
     // angular configuration for route
 };
-const reactPage = ngReactifyPageConfig.getReactRoute(reactPageConfig, angularRouteConfig);
 
 const appName = 'app-angular';
 angular.module(appName, [ngReactify.name, 'ngRoute'])
     .config(['$routeProvider', ($routeProvider) => {
-        console.log('ROUTE CONFIGURED', reactPage);
-        $routeProvider
+        ngReactify.wrapRouteProvider($routeProvider)
             .when('/', {
                 template: `
                     <div>
@@ -96,8 +90,7 @@ angular.module(appName, [ngReactify.name, 'ngRoute'])
                     </div>
                 `
             })
-            .when(reactPage.path, reactPage.config)
-            .when(reactPageConfig.path, reactPage.config)
+            .react.when(reactPageConfig, ngRouteConfig)
             .otherwise({
                 template: '<h1>SORRY! ERROR!</h1>'
             });
@@ -157,4 +150,4 @@ the ng-reactify module, go to node_modules/ng-reactify/DEV and have a look on ap
 file.
 
 ## Happy for sharing it!
-Thanks for all support and help us making pull request ot optimise this module! 
+Thanks for all support and help us making pull request to optimise this module! 

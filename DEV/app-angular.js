@@ -2,18 +2,14 @@
 /* eslint-disable */
 import angular from 'angular';
 import 'angular-route';
-import {
-    ngReactify,
-    ngReactifyPageConfig,
-    reactifyComponentRegister
-} from '../index';
+import ngReactify from '../index';
 
 import HelloWorld from '../src/boilerplate/hello-world';
 import Comment from '../src/boilerplate/comment';
 import PagesRoutes from '../src/boilerplate/pages-routes';
 import { hashHistory } from 'react-router';
 
-reactifyComponentRegister.set({
+ngReactify.registerComponents({
     HelloWorld,
     Comment,
     PagesRoutes
@@ -23,16 +19,15 @@ const reactPageConfig = {
     componentName: 'PagesRoutes',
     history: hashHistory
 };
-const angularRouteConfig = {
+const ngRouteConfig = {
     // angular configuration for route
 };
-const reactPage = ngReactifyPageConfig.getReactRoute(reactPageConfig, angularRouteConfig);
 
 const appName = 'app-angular';
 const appModule = angular.module(appName, [ngReactify.name, 'ngRoute']);
 
     appModule.config(['$routeProvider', ($routeProvider) => {
-        $routeProvider
+        ngReactify.wrapRouteProvider($routeProvider)
             .when('/', {
                 template: `
                     <div>
@@ -77,8 +72,7 @@ const appModule = angular.module(appName, [ngReactify.name, 'ngRoute']);
                     </div>
                 `
             })
-            .when(reactPage.path, reactPage.config)
-            .when(reactPageConfig.path, reactPage.config)
+            .react.when(reactPageConfig, ngRouteConfig)
             .otherwise({
                 template: '<h1>SORRY! ERROR!</h1>'
             });
