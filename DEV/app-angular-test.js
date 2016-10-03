@@ -39,7 +39,7 @@ describe('ngReactify', () => {
                 <div ng-reactify-component="HelloWorld"></div>
             `)($scope);
 
-            expect($html.text()).toBe('hello world!');
+            expect($html.text()).toBe('hello world!I am a static component that is not consuming anything.');
         });
 
         it('should show the react component Comment in the angular template', () => {
@@ -49,7 +49,7 @@ describe('ngReactify', () => {
                 <div ng-reactify-component="Comment" props="{ author: 'Leticia', text: 'Some lovely message' }"></div>
             `)($scope);
 
-            expect($html.text()).toBe('LeticiaSome lovely message');
+            expect($html.text()).toBe('LeticiaSome lovely messageI am a component that is comsuming props.');
         });
     });
 });

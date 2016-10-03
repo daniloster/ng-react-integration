@@ -11,6 +11,7 @@ const Comment = ({ author, text }) => (
             {author}
         </h2>
         <p>{text}</p>
+        <p>I am a component that is comsuming props.</p>
     </div>
 );
 

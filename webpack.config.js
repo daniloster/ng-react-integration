@@ -4,7 +4,7 @@ var path = require('path'),
     webpack = require('webpack'),
     package = require('./package.json'),
 
-    isTest = process.env.NODE_ENV === 'test',
+    isTest = process.env.NODE_ENV === 'test' || process.env.NODE_ENV === 'test-dev',
     isProd = process.env.NODE_ENV === 'production',
     isDev = process.env.NODE_ENV === 'dev',
 
@@ -33,6 +33,10 @@ var path = require('path'),
         plugins: [
             new webpack.optimize.DedupePlugin()
         ],
+        externals: {
+            'angular': 'angular',
+            'angular-route': 'angular'
+        },
         module: {
             preLoaders: [
                 {
@@ -116,11 +120,9 @@ if (isTest) {
         // require the Node-only "jsdom" package.
         IN_BROWSER: true
     }));
-    webpackConfig.externals = {
-        'react/addons': true,
-        'react/lib/ExecutionEnvironment': true,
-        'react/lib/ReactContext': true
-    };
+    webpackConfig.externals['react/addons'] = true;
+    webpackConfig.externals['react/lib/ExecutionEnvironment'] = true;
+    webpackConfig.externals['react/lib/ReactContext'] = true;
 } else {
     webpackConfig.entry = {
         [package.name]: [

@@ -36,8 +36,13 @@ function getReactRoute(reactOptions, angularRouteOptions) {
                             ng-reactify-component="${reactOptions.componentName}"
                             props="props"
                             store="store"
-                            history="history"
-                            route="${reactOptions.path}"
+                            ${
+                                reactOptions.history
+                                ? `history="history"
+                                route="${reactOptions.path}"`
+                                : ''
+                            }
+                            
                         ></div>
                     </div>
                 `

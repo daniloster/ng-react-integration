@@ -38,6 +38,7 @@ class Pages extends Component {
                     <br />
                     <Link to={[basePath, '/../'].join('')}>Angular Home</Link>
                 </nav>
+                <p>I am a component that has routes.</p>
                 {this.props.children}
             </div>
         );

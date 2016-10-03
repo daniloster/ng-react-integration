@@ -3,7 +3,10 @@ var webpackConfig = require('./webpack.config'),
     path = require('path'),
     
     phantomPolyfill = require.resolve('phantomjs-polyfill'),
-    babelPolyfill = require.resolve('babel-polyfill');
+    babelPolyfill = require.resolve('babel-polyfill'),
+    ng = require.resolve('angular'),
+    ngRoute = require.resolve('angular-route'),
+    isTravis = process.env.NODE_ENV === 'test';
 
 function initKarma(config) {
     config.set({
@@ -18,11 +21,12 @@ function initKarma(config) {
             noInfo: true,
             stats: 'errors-only'
         },
-        basePath: path.resolve(__dirname),
+        basePath: isTravis ? '/home/travis/build/daniloster/ng-reactify' : path.resolve(__dirname),
         files: [
             phantomPolyfill,
-            
             babelPolyfill,
+            ng,
+            ngRoute,
 
             { pattern: './src/.setup-test.js', watched: false },
             { pattern: './**/*-test.js', watched: false }
@@ -33,6 +37,8 @@ function initKarma(config) {
         preprocessors: {
             './src/**/*.js': ['webpack', 'sourcemap'],
             [babelPolyfill]: ['webpack', 'sourcemap'],
+            [ng]: ['webpack', 'sourcemap'],
+            [ngRoute]: ['webpack', 'sourcemap'],
             './DEV/**/*.js': ['webpack', 'sourcemap']
         },
         plugins: [

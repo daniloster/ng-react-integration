@@ -26,25 +26,38 @@ import ngReactify from 'ng-reactify';
 import HelloWorld from '../src/boilerplate/hello-world';
 import Comment from '../src/boilerplate/comment';
 import PagesRoutes from '../src/boilerplate/pages-routes';
+// this counter component is already connected
+import Counter from '../src/boilerplate/counter';
+
+import store from '../src/boilerplate/store';
 import { hashHistory } from 'react-router';
 
 ngReactify.registerComponents({
     HelloWorld,
     Comment,
-    PagesRoutes
+    PagesRoutes,
+    Counter
 });
 const reactPageConfig = {
     path: '/pages',
     componentName: 'PagesRoutes',
     history: hashHistory
 };
+
 const ngRouteConfig = {
     // angular configuration for route
 };
 
+const reactCounterPageConfig = {
+    path: '/counter',
+    componentName: 'Counter',
+    store
+};
+
 const appName = 'app-angular';
-angular.module(appName, [ngReactify.name, 'ngRoute'])
-    .config(['$routeProvider', ($routeProvider) => {
+const appModule = angular.module(appName, [ngReactify.name, 'ngRoute']);
+
+    appModule.config(['$routeProvider', ($routeProvider) => {
         ngReactify.wrapRouteProvider($routeProvider)
             .when('/', {
                 template: `
@@ -63,12 +76,16 @@ angular.module(appName, [ngReactify.name, 'ngRoute'])
                             Pages
                         </a>
                         <br />
-                        <a href='#/react-me-ngdirective-withroute/'>
-                            Reactify me ngdirective with react router!
+                        <a href='#/counter'>
+                            Counter
                         </a>
                         <br />
-                        <a href='#/react-me-ngdirective-withroute-nowildcard/'>
-                            Reactify me ngdirective with react router, but with no wildcard!
+                        <a href='#/counter-no-wrappers'>
+                            Counter (No Wrappers)
+                        </a>
+                        <br />
+                        <a href='#/there-is-no-such-url/'>
+                            There is no such URL
                         </a>
                     </div>
             `
@@ -91,6 +108,22 @@ angular.module(appName, [ngReactify.name, 'ngRoute'])
                 `
             })
             .react.when(reactPageConfig, ngRouteConfig)
+            .react.when(reactCounterPageConfig, ngRouteConfig)
+            .when('/counter-no-wrappers', {
+                controller: [function () {
+                    const vm = this;
+                    vm.store = store;
+                }],
+                controllerAs: 'vm',
+                template: `
+                    <div>
+                        <div
+                            ng-reactify-component="Counter"
+                            store="vm.store"
+                        ></div>
+                    </div>
+                `
+            })
             .otherwise({
                 template: '<h1>SORRY! ERROR!</h1>'
             });
@@ -99,6 +132,7 @@ angular.module(appName, [ngReactify.name, 'ngRoute'])
 angular.element(document).ready(() => {
     angular.bootstrap(document, [appName]);
 });
+
 ```
 ### React compoennts
 For react components with links <Link /> (it is very important, we just cover react-router), they must have
