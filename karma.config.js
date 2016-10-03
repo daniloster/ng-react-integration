@@ -21,7 +21,7 @@ function initKarma(config) {
             noInfo: true,
             stats: 'errors-only'
         },
-        basePath: isTravis ? '/home/travis/build/daniloster/ng-reactify' : path.resolve(__dirname),
+        basePath: path.resolve(__dirname),
         files: [
             phantomPolyfill,
             babelPolyfill,
